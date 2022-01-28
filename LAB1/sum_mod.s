@@ -1,0 +1,37 @@
+        .text
+        .global _start
+        .org    0x0000
+
+_start:                                 # == INITIALIAZATION == 
+        ldw     r2, N(r0)               # r2 is the loop counter (decrementing)
+        movi    r3, LIST                # r3 points to the first list element
+        movi    r4, 0                   # r4 accumulates the sum
+        mov     r6, r0                  # r6 initialized to zero
+LOOP:                                   # == LOOP BODY START ==
+        ldw     r5, 0(r3)               # get next element from list
+        add     r4, r4, r5              # add element to accumulating sum in r4
+IF:                                     # marks start of if
+        blt     r5, r0, END_IF          # branch to END_IF if r5 is less than 0
+THEN:                                   # regardless of condition, we arrive here
+        movi    r5, -1                  # replace element from list in r5 with -1
+        stw     r5, 0(r3)               # store replaced register into same memory location
+        addi    r6, r6, 1               # increment replace counter by one
+END_IF:                                 # regardless of conditionl, we end here    
+        addi    r3, r3, 4               # advance the list pointer
+        subi    r2, r2, 1               # (start of branching) decrement counter
+        bgt     r2, r0, LOOP            # has count reached zero?
+                                        # == LOOP BODY END ==
+        stw     r4, SUM(r0)             # write final accumulated value to memory
+        stw     r6, REPL_COUNT(r0)      # write final replace count variable in memory
+_end:
+        br      _end
+
+# ------------------------------------------------------------------------
+
+        .org    0x1000
+SUM:    .skip   4                       # reserve 4 btes of space for final sum
+N:      .word   5                       # indicate that there are N=5 items in list
+LIST:   .word   12, 0xFFFFFFFE, 7, -1, 2    # hex value is -2 in two's-comp.
+REPL_COUNT:    .skip 4                  # reserve 4 btes of space for replace count
+
+        .end
