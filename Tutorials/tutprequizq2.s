@@ -3,7 +3,7 @@
 	.org 0x0000
 
 _start:
-	movia	sp, 0x7FFFFFFC
+	movia	sp, 0x007FFFFC
 	ldw	r2, N(r0)
 	movia	r3, LIST1
 	movia	r4, LIST2	

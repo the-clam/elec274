@@ -3,25 +3,25 @@
     .org 0x000
 
 _start:
-    movia       sp, 0x7FFFFC
-    movia       r2, LIST
-    movia       r3, N
+    movia       sp, 0x007FFFFC
+    movi        r2, LIST
+    movi        r3, N
     ldw         r3, 0(r3)
     call        CalcAvg
-    movia       r3, AVG
+    movi        r3, AVG
     stw         r2, 0(r3)
     mov         r4, r2
-    movia       r2, LIST
-    movia       r3, N
+    movi        r2, LIST
+    movi        r3, N
     ldw         r3, 0(r3)
     call        CountGTorEQAvg
-    movia       r5, N_GT_OR_EQ
+    movi        r5, N_GT_OR_EQ
     stw         r2, 0(r5)
     sub         r2, r2, r3
-    movia       r5, N_LT
+    movi        r5, N_LT
     stw         r2, 0(r5)
 
-    movia       r2, LIST            # start of tutorial exercise
+    movi        r2, LIST            # start of tutorial exercise
     ldw         r3, N
     ldw         r4, AVG
     call        DiffFromAvg
