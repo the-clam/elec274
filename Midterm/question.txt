@@ -1,0 +1,42 @@
+QUESTION:
+Prepare a modular subroutine ListGeneration(f,g,h,n,x,y) in Nios II assembly-lanauge that accepts
+pointers to the beginning of three lists f/g/h in memory, where each list has space for n word-sized
+items, and an additional parameter values x,y.
+
+For each f list element i between 0 and n-1, the required computation for this subroutine is
+f[i] = g[i] + x if g[i] < h[i], otherwise f[i] = g[i]*x - y.
+
+The subroutine should also maintain a count for the number of times that item that f list element is
+computed as a positive value, and the final count should be returned to the caller.
+
+For full modularity, the subroutine should not refer to any global variables directly by name.
+
+Include the necessary data directives in assembly language for the following global variable:
+•	N for the number of items in the lists
+•	VAL1 for the first subroutine parameter of value 3
+•	VAL2 for the second subroutine parameter of value 7
+•	DEST_LIST with sufficient space
+•	SRC_LIST1 consisting of the items { 5, 6, 1, 2 }
+•	SRC_LIST2 consisting of the items { 3, 4, 7, 8 }
+•	POS_COUNT for the number of positive-valued elements in the generated list
+
+Develop a main routine that calls the modular subroutine above with appropriate arguments to place
+the computer results into DEST_LIST from SRC_LIST1 and SRC_LIST2. Place the returned result in POS_COUNT.
+
+Include the necessary directives at the beginning for a properly implemented system.
+
+###################################################################################
+
+PSEUDOCODE:
+
+ListGeneration(f,g,h,n,x,y):
+	if(g[i] < h[i])
+		f[i] = g[i] + x
+	else
+		f[i] = g[i] * x - y
+	end if
+
+	if(f[i] >= 0)
+		pos_count++
+	endif
+ret pos_count++
