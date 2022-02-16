@@ -5,8 +5,8 @@
 _start:
 	movia	sp, 0x007FFFFC
 	ldw	r2, N(r0)
-	movia	r3, LIST1
-	movia	r4, LIST2	
+	movi 	r3, LIST1
+	movi 	r4, LIST2	
 	call	CopyList
 
 _end:
