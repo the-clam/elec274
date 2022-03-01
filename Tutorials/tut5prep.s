@@ -69,6 +69,6 @@ pc_loop:
 # ------------------------------------------------------------
 
     .org    0x1000
-TEXT:   .ascii    "This text will be "   # add zero byte to end of string in memory
-        .asciz    "printed.\n***\n"
+TEXT:   .ascii    "This text will be "   
+        .asciz    "printed.\n***\n"     # add zero byte to end of string in memory
     .end
