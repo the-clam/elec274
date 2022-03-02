@@ -53,9 +53,7 @@ PrintHexByte:
 
 PrintHexDigit:
     subi    sp, sp, 12                  # save reg values for use
-    stw     ra, 8(sp)
-    stw     r2, 4(sp)
-    stw     r3, 0(sp)                   # hold constant for comparison
+    stw     ra, 8(sp) r comparison
 
 phd_if:
     movi    r3, 10
