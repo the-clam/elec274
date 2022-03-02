@@ -10,19 +10,9 @@
 _start:
     movia   sp, 0x007FFFFC
 
-    movi    r2, 0xD1                    # test value
-    call    PrintHexByte
+    movi    r2, -128
+    call    PrintSignedHexByte
 
-    movi    r2, ' '                     # add space
-    call    PrintChar
-
-    movi    r2, 0x05                    # test value
-    call    PrintHexByte
-
-    movi    r2, '\n'                    # make new line
-    call    PrintChar
-
-    
 _end:
     break
     br _end
@@ -123,5 +113,3 @@ pshb_end_if:
     ldw     r3, 0(sp)    
     addi    sp, sp, 12
     ret
-
-# ------------------------------------------------------------
