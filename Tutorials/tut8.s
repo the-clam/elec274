@@ -10,8 +10,11 @@
 _start:
     movia   sp, 0x007FFFFC      # initialize stack pointer
 
-    movia   r2, 0xABCDEF12      # initialize test value to be passed into PrintHexWord
+    movia   r2, 65535      # initialize test value to be passed into PrintHexWord
     call    PrintHexWord
+
+    movi    r2, '\n'            # make new line
+    call    PrintChar
 
 _end:
     break
@@ -20,40 +23,33 @@ _end:
 # ------------------------------------------------------------
 
 PrintHexWord:
-    subi    sp, sp, 28      # subtract from stack pointer
-    stw     ra, 24(sp)      
-    stw     r2, 16(sp)      # send value to PHB
-    stw     r3, 12(sp)      # loop amount
-    stw     r4, 8(sp)       # loop counter
-    stw     r5, 4(sp)       # hold val
-    stw     r6, 0(sp)       # shift amount multi
+    subi    sp, sp, 20          # subtract from stack pointer
+    stw     ra, 16(sp)          # store return address for nested functions
+    stw     r2, 12(sp)          # used to send value to PrintHexByte
+    stw     r3, 8(sp)           # loop counter
+    stw     r4, 4(sp)           # shift amount multi
+    stw     r5, 0(sp)           # temporarily hold input value
 
-    movi    r3, 4           # set loop amount (4 bytes per word)
-    movi    r4, 0           # loop counter
+    movi    r3, 4               # set loop amount (4 bytes per word, so 4 loops)
+    movi    r4, 32              # hold amount to shift right
+    mov     r5, r2              # move input value to r5
 
-    mov     r5, r2          # move val into r5
+phw_loop:   
+    subi    r4, r4, 8           # decrement amount to shift left by each time by 16 bits (1 byte)
+    srl     r2, r5, r4          # shift value left by shift amount
+    andi    r2, r2, 0xFF        # and only 8 bits (0xFF) held in r2 to be printed using printhexbyte
+    call    PrintHexByte        # print the byte being held in r2 (ie. printing XX, in order of XX000000, 00XX0000, 0000XX00, 000000XX)
+    subi    r3, r3, 1           # decrement loop counter
+    bgt     r3, r0, phw_loop    # loop if needed
 
-phw_loop:
-    movi    r2, 24          # default "shift" amount (ie. need 8 first 8 bits from first, so shift 32 bits 24 right = getting 8 bits)
-    muli    r6, r4, 8       # in loop order(0, 8, 16, 24)
-    sub    r2, r2, r6      # in loop order(24, 16, 8, 0)
-    srl     r2, r5, r2      # shift left by (24, 16, 8, then 0)
-    andi    r2, r2, 0xFF    # only and the last 8 bits
-    call    PrintHexByte
-    addi    r4, r4, 1
-    blt     r4, r3, phw_loop
-
-    ldw     ra, 24(sp)      
-    ldw     r2, 16(sp)      # send value to PHB
-    ldw     r3, 12(sp)      # loop amount
-    ldw     r4, 8(sp)       # loop counter
-    ldw     r5, 4(sp)       # hold val
-    ldw     r6, 0(sp)       # shift amount multi
-    addi    sp, sp, 28      # add to stack pointer
+    ldw     ra, 16(sp)          # store return address for nested functions
+    ldw     r2, 12(sp)          
+    ldw     r3, 8(sp)           
+    ldw     r4, 4(sp)           
+    ldw     r5, 0(sp)            
+    addi    sp, sp, 20          # add to stack pointer
 
     ret
-
-
 
 # ------------------------------------------------------------
 
