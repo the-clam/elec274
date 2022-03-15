@@ -16,10 +16,48 @@ _start:
     movi    r2, '\n'            # make new line
     call    PrintChar
 
+    movia   r2, 72      # initialize test value to be passed into PrintHexWord
+    call    PrintDec99_Solution
+
+    movi    r2, '\n'            # make new line
+    call    PrintChar
+
 _end:
     break
     br _end
 
+# ------------------------------------------------------------
+
+PrintDec99_Solution:
+    subi    sp, sp, 16              # save register values for use
+    stw     ra, 12(sp)
+    stw     r2, 8(sp)
+    stw     r3, 4(sp)
+    stw     r4, 0(sp)  
+    
+    movi    r3, 10                  # store 10 in r3 for use in div instruction
+    div     r3, r2, r3              # divide the inputted value by 10 to get ten's place, store in r3
+    muli    r4, r3, 10              # multiply number of tens by 10 (so they can be subtracted from the total value)
+    sub     r4, r2, r4              # subtract all multiples of ten from the inputted value to get value of one's place, store in r4
+
+    bgt     r3, r0, PD9_if_soln      # if number is less than 10, skip to only printing one's place
+
+PD9_if_soln:
+    addi    r2, r3, '0'             # move the ten's place into r2 to be used as parameter for PrintChar, add '0' for appropriate ASCII
+    call    PrintChar               # print ten's palce
+
+PD9_else_soln:
+    addi    r2, r4, '0'             # move the one's place into r2 to be used a parameter for PrintChar, add '0' for appropriate ASCII
+    call    PrintChar               # print one's place
+
+    ldw     ra, 12(sp)
+    ldw     r2, 8(sp)
+    ldw     r3, 4(sp)
+    ldw     r4, 0(sp)
+    addi    sp, sp, 16              # move stack pointer back up
+
+    ret
+        
 # ------------------------------------------------------------
 
 PrintDec99_Attempt:
@@ -49,7 +87,7 @@ PD9_endif:
     ldw     r2, 8(sp)
     ldw     r3, 4(sp)
     ldw     r4, 0(sp)
-    addi    sp, sp, 16              # save reg values for use
+    addi    sp, sp, 16              # move stack pointer back up
     
     ret
 
