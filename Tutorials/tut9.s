@@ -40,7 +40,7 @@ PrintDec99_Solution:
     muli    r4, r3, 10              # multiply number of tens by 10 (so they can be subtracted from the total value)
     sub     r4, r2, r4              # subtract all multiples of ten from the inputted value to get value of one's place, store in r4
 
-    bgt     r3, r0, PD9_if_soln      # if number is less than 10, skip to only printing one's place
+    beq     r3, r0, PD9_else_soln   # if number is less than 10, skip to only printing one's place
 
 PD9_if_soln:
     addi    r2, r3, '0'             # move the ten's place into r2 to be used as parameter for PrintChar, add '0' for appropriate ASCII
