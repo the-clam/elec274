@@ -12,7 +12,12 @@ _start:
 
     ldw     r2, N(r0)
     movia   r3, LIST
-    call    ShowBytes
+    call    ShowBytes_Attempt
+
+    # broken
+    # ldw     r2, N(r0)
+    # movia   r3, LIST
+    # call    ShowBytes_Soln
 
 _end:
     break
@@ -20,7 +25,60 @@ _end:
 
 # ------------------------------------------------------------
 
-ShowBytes:
+ShowBytes_Soln:
+    subi    sp, sp, 24          # save reg values for use
+    stw     ra, 20(sp)
+    stw     r2, 16(sp)          # ptr, use as input for subroutines
+    stw     r3, 12(sp)          # hold n
+    stw     r4, 8(sp)           # move pointer in here
+    stw     r5, 4(sp)           # r
+    stw     r6, 0(sp)           # 16
+    
+    mov     r4, r2
+    mov     r5, r0
+    movi    r6, 16
+
+sb_s_loop:
+sb_s_if1:
+    ble     r5, r0, sb_s_end_if1
+sb_s_then1:
+    movi    r2, ' '
+    call    PrintChar
+sb_s_end_if1:
+    ldbu    r2, 0(r4)
+    call    PrintHexByte
+    addi    r5, r5, 1
+
+sb_s_if2:
+    blt     r5, r6, sb_s_end_if2
+sb_s_then2:
+    movi    r2, '\n'
+    call    PrintChar
+    movi    r5, 0
+sb_s_end_if2:
+    addi    r4, r4, 1
+    subi    r3, r3, 1
+    bgt     r3, r0, sb_s_loop
+
+sb_if3:
+    beq     r5, r0, sb_end_if3
+sb_then3:
+    movi    r2, '\n'
+    call    PrintChar
+sb_end_if3:
+
+    ldw     ra, 20(sp)
+    ldw     r2, 16(sp)
+    ldw     r3, 12(sp)
+    ldw     r4, 8(sp) 
+    ldw     r5, 4(sp) 
+    ldw     r6, 0(sp) 
+    addi    sp, sp, 24
+    ret
+
+# ------------------------------------------------------------
+
+ShowBytes_Attempt:
     subi    sp, sp, 20          # save reg values for use
     stw     ra, 16(sp)          # save return address for nested functions
     stw     r2, 12(sp)          # pass in value of N (initially), nested input
@@ -32,8 +90,8 @@ ShowBytes:
     movi    r5, 4               # set count to 4
 
 sb_loop:
-    ldb     r2, 0(r3)           # load byte from pointer
-    call    PrintSignedHexByte
+    ldbu    r2, 0(r3)           # load byte from pointer
+    call    PrintHexByte
 
     movi    r2, ' '             # print space between every byte
     call    PrintChar
@@ -65,30 +123,6 @@ sb1_endif:
     ldw     r5, 0(sp)           # countdown number of prints per row before newline
     addi    sp, sp, 20          # save reg values for use
 
-    ret
-
-# ------------------------------------------------------------
-
-PrintSignedHexByte:
-    subi    sp, sp, 12
-    stw     ra, 8(sp)
-    stw     r2, 4(sp)
-    stw     r3, 0(sp)
-
-pshb_if:
-    bge     r2, r0, pshb_end_if
-pshb_then:
-    mov     r3, r2
-    movi    r2, '-'
-    call    PrintChar
-    sub     r2, r0, r3
-pshb_end_if:
-    call    PrintHexByte
-    
-    ldw     ra, 8(sp)
-    ldw     r2, 4(sp)
-    ldw     r3, 0(sp)    
-    addi    sp, sp, 12
     ret
 
 # ------------------------------------------------------------
