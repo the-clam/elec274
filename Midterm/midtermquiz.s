@@ -22,18 +22,19 @@ _end:
 ListGeneration:
     subi    sp, sp, 40
     stw     ra, 36(r0)
-    stw     r3, 32(r0)   #list1 ptr
-    stw     r4, 28(r0)   #list2 ptr
-    stw     r5, 24(r0)   #N counter
-    stw     r6, 20(r0)   #val1
-    stw     r7, 16(r0)   #val2
-    stw     r8, 12(r0)   #g[i]
+    stw     r3, 32(r0)  #list1 ptr
+    stw     r4, 28(r0)  #list2 ptr
+    stw     r5, 24(r0)  #N counter
+    stw     r6, 20(r0)  #val1
+    stw     r7, 16(r0)  #val2
+    stw     r8, 12(r0)  #g[i]
     stw     r9, 8(r0)   #h[i]
     stw     r10, 4(r0)  #pos counter
     stw     r11, 0(r0)  #temp calculation holder
 
 #main calculation
 lg_loop:
+    mov     r10, r0     #initialize positive counter at 0
     mov		r11, r0 
 lg_if:
     ldw     r8, 0(r3)
