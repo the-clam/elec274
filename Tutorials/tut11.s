@@ -33,6 +33,48 @@ _end:
 
 # ------------------------------------------------------------
 
+MakeUpperCase:
+    subi    sp, sp, 20
+    stw     ra, 16(sp)           
+    stw     r3, 12(sp)  # str pointer from r2
+    stw     r4, 8(sp)   # ch
+    stw     r5, 4(sp)
+    stw     r6, 0(sp)
+
+    mov     r3, r2      # move pointer
+    movi    r5, 'a'
+    movi    r6, 'z'
+    movi    r2, 0       # initialize counter to 0
+
+mu_loop:
+    ldb     r4, 0(r3)
+mu_if:
+    beq     r4, r0, mu_loop_end
+mu_else:
+    blt     r4, r5, mu_loop_end
+    bgt     r4, r6, mu_end_if
+mu_then:
+    addi    r4, r4, 'A'
+    subi    r4, r4, 'a'
+    stb     r4, 0(r3)
+    addi    r2, r2, 1
+mu_end_if:
+    addi    r3, r3, 1
+    beq     r0, r0, mu_loop
+
+mu_loop_end:
+
+    ldw     ra, 16(sp)           
+    ldw     r3, 12(sp)
+    ldw     r4, 8(sp)
+    ldw     r5, 4(sp) 
+    ldw     r6, 0(sp)
+    addi    sp, sp, 20
+    
+    ret
+
+# ------------------------------------------------------------
+
 MakeUpperCase_Attempt:
     subi    sp, sp, 20              # save reg values for use
     stw     ra, 16(sp)              
@@ -43,8 +85,8 @@ MakeUpperCase_Attempt:
 
     mov     r3, r2
     mov     r4, r0
-    movi    r5, 97                  # 'a'
-    movi    r6, 122                 # 'z'
+    movi    r5, 'a'                  # 'a'
+    movi    r6, 'z'                 # 'z'
 
 muc_loop_a:
     ldb     r2, 0(r3)               # load byte in
@@ -158,5 +200,6 @@ pc_loop:
 # ------------------------------------------------------------
 
     .org 0x1000
+REPL_STRING:  .asciz "Num of replaced lowercase letters: "
 TEST_STRING:  .asciz "This Phrase Has 24 Lowercase Letters\n" # this one has 26 lowercase
     .end
