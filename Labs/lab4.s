@@ -10,30 +10,88 @@
 _start:
     movia   sp, 0x007FFFFC      # initialize stack pointer
 
-    movia   r2, 0x0             # test 0x0, should output 00000000
-    call    PrintHexWord
-
-    movi    r2, '\n'            # newline
-    call    PrintChar
-
-    movia   r2, 0xA5A5          # test 0x0, should output 0000A5A5
-    call    PrintHexWord
-
-    movi    r2, '\n'            # newline
-    call    PrintChar
-
-    movia   r2, 0xFFFFFFFF      # test 0x0, should output FFFFFFFF
-    call    PrintHexWord
-
-    movi    r2, '\n'            # newline
-    call    PrintChar
-
-    movia   r2, TEST_STRING     # move address of string to be outputted for testing
+    movia   r2, STRING1
     call    PrintString
+
+    movia   r2, STRING2
+    call    PrintString
+
+    movia   r2, LIST
+    ldw     r3, N(r0)
+    call ShowMemContents
+
+    
 
 _end:
     break
     br _end
+
+# ------------------------------------------------------------
+
+ShowMemContents:
+    subi    sp, sp, 32
+    stw     ra, 28(sp)
+    stw     r2, 24(sp)   # list pointer
+    stw     r3, 20(sp)   # count n
+    stw     r4, 16(sp)   # c_counter
+    stw     r5, 12(sp)   # store current item from list
+    stw     r6, 8(sp)   # hold 0x1000
+    stw     r7, 4(sp)   # list pointer temp
+    stw     r8, 0(sp)   # contents
+
+    mov     r7, r2    
+    mov     r4, r0
+    movia   r6, 0x1000
+
+smc_loop:
+    ldw     r5, 0(r7)
+smc_if:
+    bge     r5, r6, smc_else
+smc_then:
+    movia   r2, CODE_STRING
+    call    PrintString
+    addi    r4, r4, 1
+    br      smc_endif
+smc_else:
+    movia   r2, DATA_STRING
+    call    PrintString
+smc_endif:
+    movia   r2, LOCATION_STRING
+    call    PrintString
+
+    mov     r2, r5
+    call    PrintHexWord
+
+    movia   r2, CONTAINS_STRING
+    call    PrintString
+
+    ldw     r2, 0(r5)
+    call    PrintHexWord
+
+    movi    r2, '\n'
+    call    PrintChar
+
+    addi    r7, r7, 4
+    subi    r3, r3, 1
+    bgt     r3, r0, smc_loop
+
+    mov     r2, r4
+    call    PrintHexWord
+
+    movia   r2, END_STRING
+    call    PrintString
+
+    ldw     ra, 28(sp)
+    ldw     r2, 24(sp)
+    ldw     r3, 20(sp)
+    ldw     r4, 16(sp)
+    ldw     r5, 12(sp)
+    ldw     r6, 8(sp) 
+    ldw     r7, 4(sp) 
+    ldw     r8, 0(sp) 
+    addi    sp, sp, 32
+
+    ret
 
 # ------------------------------------------------------------
 
@@ -166,5 +224,13 @@ pc_loop:
 # ------------------------------------------------------------
 
     .org 0x1000
-TEST_STRING: .asciz "Lab 4 Preparation \n"
+N: .word 5
+LIST: .word 0x0, 0x4, 0x8, 0x1000, 0x1004
+CODE_STRING:    .asciz "[code] "
+DATA_STRING:    .asciz "[data] "
+LOCATION_STRING: .asciz "location "
+CONTAINS_STRING: .asciz " contains "
+END_STRING: .asciz " were code locations\n"
+STRING1: .asciz "ELEC274 by\n"
+STRING2: .asciz "Campbell, Zubia, Carl\n"
     .end
